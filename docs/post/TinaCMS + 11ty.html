@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="//cdn.staticfile.net/Primer/21.0.7/primer.css" rel="stylesheet" />
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="TinaCMS + 11ty">
+<title>TinaCMS + 11ty</title>
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">TinaCMS + 11ty</h1>
+<div class="title-right">
+    <a href="https://Kairat619.github.io/github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/Kairat619/github.io/issues/1" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>I was browsing the web and kept coming across <a href="https://tina.io/" rel="nofollow">TinaCMS</a> and how you can run it locally, as well as in their cloud platform. What I did not want to do was add a lot of complexity to adding this to my site, and make changes to the structure of my site, more dependencies, etc. Luckily, most of the installation was a drop-in-place system and was able to get started pretty quickly.</p>
+<p>There is a nice <a href="https://tina.io/docs/frameworks/11ty/" rel="nofollow">11ty + TinaCMS Setup Guide</a> as well. Plus, I'll share a little of my setup post install.</p>
+<p>Getting Started<br>
+TinaCMS has a pretty simple quick setup guide to get their CMS style solution added to your project.</p>
+<p>npx @tinacms/cli@latest init<br>
+This will install the tinacms and accompanying CLI tools if needed. You might get asked some basic questions, and I took the defaults, as I didn't have much to change.</p>
+<p>Configuration after install<br>
+After the installation, their guide has you go through your new tina/config.ts file and update any <a href="https://tina.io/docs/schema/" rel="nofollow">content modeling</a>, as they call it. A fancy way to state you can adjust the CMS to your project and customize the system to your needs.</p>
+<p>I'll review the changes I made for my <a href="https://www.11ty.dev/" rel="nofollow">11ty</a> install later.</p>
+<p>Starting TinaCMS<br>
+To get started and make sure everything is starting correctly, we can run the following command.</p>
+<p>npx tinacms dev - c "@11ty/eleventy --serve"<br>
+This will start the tinacms server and then your custom dev command to serve your content while editing.</p>
+<p>Once your page is running and started, you can browse to <a href="http://localhost:8080/admin" rel="nofollow">http://localhost:8080/admin</a> or :/admin and see something like the following</p>
+<p>Welcome screen of TinaCMS after initial install</p>
+<p>Deploying your site<br>
+Once you start editing and get your site configured, you can commit your tina/ folder that has your configurations to your remote git host and then integrate with the <a href="https://app.tina.io/" rel="nofollow">Tina Cloud</a> and be able to edit files online from anywhere.</p>
+<p>For now, I am going to keep it all local, and could commit the tina/ folder to keep configuration consistent across devices.</p>
+<p>If you'd like more information, check out the documentation for <a href="https://tina.io/docs/frameworks/11ty/#deploy-tina-to-your-site" rel="nofollow">Deploying Tina to your site</a>.</p>
+<p>My Configuration Changes<br>
+First, I wanted to configure a new run command. The npx tinacms dev -c "eleventy --serve" is a bit much to always type in. Plus I have dev command that properly starts up my stylus, eleventy watch, and serve commands.</p>
+<p>"scripts": {<br>
+"dev": "cross-env ELEVENTY_ENV=dev concurrently -n stylus,11ty "npm:watch:stylus" "npm:watch:11ty"",<br>
+"cms": "npx tinacms dev -c "npm run dev"",<br>
+},<br>
+Now I can run npm run cms and properly the CMS engine and the 11ty project.</p>
+<p>Within the tina/config.ts file, you have all your configurations for your CMS site.</p>
+<p>The build and media are configured based on where you have your static content and build directory going when 11ty builds your site. For me, I have it create a build folder on the root and my media is stored in a static folder at the root that gets copied over to the build folder on build.</p>
+<p>build: {<br>
+outputFolder: "admin",<br>
+publicFolder: "build",<br>
+},<br>
+media: {<br>
+tina: {<br>
+mediaRoot: "static",<br>
+publicFolder: "build",<br>
+},<br>
+},<br>
+The schema is where the real fun begins! You define a collection, and can customize the settings as well as the fields for the front matter, defaults, file names, and more.</p>
+<p>By default, TinaCMS names your file the title you provide and adds the markdown extension. I wanted to require a title and have it save the file name according to how my site is built.</p>
+<p>const dateTime = (new Date()).toISOString().split('T')[0];</p>
+<p>// excerpt from the export function of defineConfig();<br>
+schema: {<br>
+collections: [<br>
+{<br>
+name: "post",<br>
+label: "Posts",<br>
+path: "src/posts",<br>
+format: 'md',<br>
+},<br>
+fields: [<br>
+{<br>
+type: "string",<br>
+name: "title",<br>
+label: "Title",<br>
+isTitle: true,<br>
+required: true,<br>
+},<br>
+{<br>
+type: "rich-text",<br>
+name: "body",<br>
+label: "Body",<br>
+isBody: true,<br>
+},<br>
+],<br>
+ui: {<br>
+filename: {<br>
+// if disabled, the editor can not edit the filename<br>
+readonly: true,<br>
+// Example of using a custom slugify function<br>
+slugify: (values) =&gt; {<br>
+// Values is an object containing all the values of the form. In this case it is {title?: string, topic?: string}<br>
+return <code class="notranslate">${dateTime}-${values.title ?.toLowerCase() .replace(/ /g, '-')}</code><br>
+},<br>
+},<br>
+},<br>
+},<br>
+],<br>
+}<br>
+There is a lot here. I was able to define the custom path to my posts in src/posts and TinaCMS properly displayed my posts in the year folders I recently added. The ui:{} section sets the filename filed to read-only, so you can't edit the field, this is optional. However, I did create a dateTime constant prior to the export function to get today's date in the format needed. We can then pass along the built-in slugify filter and return the YYYY-mm-dd-title-of-file.md as needed.</p>
+<p>I added a date field, and was able to set a default for this value as well. TinaCMS has some nice filters on the files, but reads the front matter for a date item, and my posts do not have this already. Once I added a custom field, this will be good moving forward.</p>
+<p>{<br>
+label: "Date",<br>
+name: "date",<br>
+type: "datetime",<br>
+ui: {<br>
+dateFormat: 'YYYY-MM-DD',<br>
+},<br>
+},<br>
+I kept with the same date format as the file name for consistency. What is nice is the ability to set default values for the fields as well.</p>
+<p>schema: {<br>
+collections: [<br>
+{<br>
+name: "post",<br>
+label: "Posts",<br>
+path: "src/posts",<br>
+format: 'md',<br>
+defaultItem: () =&gt; {<br>
+return {<br>
+// When a new post is created the title field will be set to "New post"<br>
+date: dateTime, // the const defined previously.<br>
+}<br>
+},<br>
+fields: [<br>
+...<br>
+The other neat thing you can do with string fields is create a list of items. I used this for my site's tags that I choose when writing the posts.</p>
+<p>{<br>
+type: 'string',<br>
+label: 'Tags',<br>
+name: 'tags',<br>
+list: true,<br>
+options: [<br>
+{<br>
+value: "100DaysToOffload",<br>
+label: "100DaysToOffload"<br>
+},<br>
+{<br>
+value: "11ty",<br>
+label: "11ty"<br>
+},<br>
+]<br>
+}<br>
+Here is what this looks like now.</p>
+<p>Screenshot of the final TinaCMS config updates.</p>
+<p>Conclusion<br>
+I know I previously wrote about <a href="https://claytonerrington.com/blog/cloudcannon-eleventy/" rel="nofollow">CloudCannon and 11ty</a>, but with today's technology there are plenty of great choices. CloudCannon is a great choice as well. Currently, it is in some infancy and will only get better. TinaCMS I have heard of for a while, just never had a moment to get it tested and working until now. There is some setup needed still, but so far I am enjoying the configuration changes and ability to write in a visual way as well.</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+</div>
+    <div id="footer">Copyright © <span id="year"></span><a href="https://Kairat619.github.io/github.io"> Blog Title </a>
+<p>
+<span id="runday"></span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a>
+</p>
+
+<script>
+if(""!=""){
+    var now=new Date();
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("year").innerHTML=now.getFullYear();
+    if(""!=""){document.getElementById("runday").innerHTML=" • "+"网站运行"+diffDay+"天"+" • ";}
+    else{document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";}
+}
+</script>
+</div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n\n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","Kairat619/github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+</script>
+
+
+
+</html>
