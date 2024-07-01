@@ -4,7 +4,7 @@
     <meta content="text/html; charset=utf-8" http-equiv="content-type" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link href="//cdn.staticfile.net/Primer/21.0.7/primer.css" rel="stylesheet" />
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
     <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
@@ -503,8 +503,10 @@ Here is what this looks like now.</p>
 <p>Conclusion<br>
 I know I previously wrote about <a href="https://claytonerrington.com/blog/cloudcannon-eleventy/" rel="nofollow">CloudCannon and 11ty</a>, but with today's technology there are plenty of great choices. CloudCannon is a great choice as well. Currently, it is in some infancy and will only get better. TinaCMS I have heard of for a while, just never had a moment to get it tested and working until now. There is some setup needed still, but so far I am enjoying the configuration changes and ability to write in a visual way as well.</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
+
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
 <div class="comments" id="comments"></div>
+
 </div>
     <div id="footer">Copyright © <span id="year"></span><a href="https://Kairat619.github.io/bilimlink"> BilimLink </a>
 <p>
@@ -559,6 +561,8 @@ console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n\n","padding:5p
 <script>
 document.getElementById("pathHome").setAttribute("d",IconList["home"]);
 document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
 
 function openComments(){
     cm=document.getElementById("comments");
